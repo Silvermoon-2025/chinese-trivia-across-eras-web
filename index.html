@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赤县神州古今漫谈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#FFD700',
+                        accent: '#0F4C81',
+                        neutral: '#F8FAFC',
+                        'neutral-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+// 获取元素
+const musicButton = document.getElementById('musicButton');
+const audioPlayer = document.getElementById('audioPlayer');
+const icon = musicButton.querySelector('i');
+
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+        }
+
+        /* 网页进入平滑动画 */
+        body {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 夜间模式样式 */
+        body.dark-mode {
+            background-color: #1a202c;
+            color: white;
+        }
+
+        body.dark-mode .bg-white {
+            background-color: #2d3748;
+        }
+
+        body.dark-mode .text-neutral-dark {
+            color: white;
+        }
+
+        body.dark-mode .bg-gray-50 {
+            background-color: #4a5568;
+        }
+
+        /* 夜间模式按钮样式 */
+        #dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #165DFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s ease;
+        }
+
+        #dark-mode-toggle:hover {
+            background-color: #0f4c81;
+        }
+    </style>
+</head>
+
+<body class="bg-neutral text-neutral-dark font-sans min-h-screen flex flex-col">
+<!-- 音乐播放按钮（放在夜间模式按钮上方） -->
+<button onclick="toggleMusic()" style="position:fixed; bottom:6rem; right:1.5rem; width:3rem; height:3rem; border-radius:50%; background:white; border:2px solid #3b82f6; cursor:pointer; z-index:999;">
+  <i id="musicIcon" class="fa fa-music" style="color:#3b82f6; font-size:1.2rem;"></i>
+</button>
+    <!-- 夜间模式按钮 -->
+    <button id="theme-toggle"
+        class="fixed bottom-6 right-6 w-32 h-14 rounded-full border-2 border-yellow-400 bg-white shadow-lg overflow-hidden transition-all duration-300 ease-in-out z-50 cursor-pointer hover:scale-105 active:scale-95">
+        <div class="relative w-full h-full overflow-hidden">
+            <!-- 白天模式背景 - 云彩 -->
+            <div id="day-bg"
+                class="absolute inset-0 bg-blue-100 transition-opacity duration-500 ease-in-out">
+                <div class="absolute top-3 left-2 w-12 h-4 bg-white rounded-full"></div>
+                <div class="absolute top-5 left-7 w-10 h-4 bg-white rounded-full"></div>
+                <div class="absolute top-3 right-2 w-12 h-4 bg-white rounded-full"></div>
+                <div class="absolute top-5 right-7 w-10 h-4 bg-white rounded-full"></div>
+            </div>
+
+            <!-- 夜晚模式背景 - 星星 -->
+            <div id="night-bg"
+                class="absolute inset-0 bg-black opacity-0 transition-opacity duration-500 ease-in-out">
+                <!-- 星星只分布在左侧区域 -->
+                <div class="absolute top-3 left-3 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"></div>
+                <div class="absolute top-6 left-8 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"
+                    style="animation-delay: 0.5s"></div>
+                <div class="absolute top-4 left-12 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"
+                    style="animation-delay: 1s"></div>
+                <div class="absolute bottom-3 left-5 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"
+                    style="animation-delay: 1.5s"></div>
+                <div class="absolute bottom-5 left-10 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"
+                    style="animation-delay: 2s"></div>
+            </div>
+
+            <!-- 太阳/月亮组合 -->
+            <div id="toggle-icon"
+                class="absolute top-1 w-12 h-12 rounded-full transition-transform duration-700 ease-in-out transform">
+                <!-- 太阳 -->
+                <div id="sun"
+                    class="absolute inset-0 w-full h-full bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50 transition-opacity duration-300 ease-in-out">
+                    <!-- 太阳光芒 -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="absolute w-14 h-1.5 bg-yellow-400 rounded-full"></div>
+                        <div class="absolute w-1.5 h-14 bg-yellow-400 rounded-full"></div>
+                        <div class="absolute w-10 h-1.5 bg-yellow-400 rounded-full transform rotate-45"></div>
+                        <div class="absolute w-1.5 h-10 bg-yellow-400 rounded-full transform rotate-45"></div>
+                    </div>
+                </div>
+
+                <!-- 月亮 -->
+                <div id="moon"
+                    class="absolute inset-0 w-full h-full bg-gray-200 rounded-full shadow-lg opacity-0 transition-opacity duration-300 ease-in-out">
+                    <!-- 月亮坑洼 -->
+                    <div class="absolute top-2 left-2 w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <div class="absolute top-4 right-3 w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                    <div class="absolute bottom-3 left-3 w-2.5 h-2.5 bg-gray-300 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </button>
+
+    <!-- 顶部导航 -->
+    <header class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <a href="https://dedicated-service-website-for-history.netlify.app/"
+                        class="flex items-center hover:opacity-90 transition-opacity">
+                        <i class="fa fa-book text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">历史爱好者服务专设网站</span>
+                    </a>
+                </div>
+                <div class="text-center md:text-right">
+                    <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-shadow mb-2">赤县神州古今漫谈</h1>
+                    <p class="text-white/80">探索中国的历史、文化以及现代见闻</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- 进度指示器 -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-semibold">平台文章总数</h2>
+                <span class="text-sm text-gray-600">6/20</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-primary h-2.5 rounded-full" style="width: 30%"></div>
+            </div>
+        </div>
+
+        <!-- 中国信息卡片 -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 transform transition-all duration-300 hover:shadow-2xl">
+            <div class="relative">
+                <img src="Palace Museum.png" class="w-full h-64 object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-white p-6">中华人民共和国</h2>
+                </div>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2">
+                        <div class="prose max-w-none">
+                            <p>中华人民共和国（英语：People's Republic of China），简称“中国”，是位于亚洲东部、太平洋西岸的社会主义国家。中国是世界上历史最悠久的国家之一，有着光辉灿烂的文化和光荣的革命传统。</p>
+                            <p>-----</p>
+                            <p>首都：北京</p>
+                            <p>成立时间：1949年10月1日</p>
+                            <p>官方语言：普通话</p>
+                            <p>政治体制：人民代表大会制度</p>
+                            <p>货币：人民币（¥）</p>
+                            <p>主要宗教：佛教、道教、伊斯兰教、天主教、基督教等</p>
+                            <p>国歌：《义勇军进行曲》</p>
+                            <p>最大城市：上海、北京、广州等</p>
+                            <p>主要河流：长江、黄河、珠江等</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h3 class="font-bold text-lg mb-3 flex items-center">
+                            <i class="fa fa-map-marker text-primary mr-2"></i> 地理位置
+                        </h3>
+                        <p class="text-sm">中国位于亚洲东部，太平洋西岸，陆地总面积约960万平方千米，海域总面积约473万平方千米。东邻朝鲜，北邻蒙古，东北邻俄罗斯，西北邻哈萨克斯坦、吉尔吉斯斯坦、塔吉克斯坦，西和西南与阿富汗、巴基斯坦、印度、尼泊尔、不丹等国家接壤，南与缅甸、老挝、越南相连。东部和东南部同韩国、日本、菲律宾、文莱、马来西亚、印度尼西亚隔海相望。</p>
+                        <div class="mt-4">
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fa fa-users text-primary mr-2"></i> 人口
+                            </h3>
+                            <p class="text-sm">约14.08亿（2024年数据）</p>
+                        </div>
+                        <div class="mt-4">
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fa fa-area-chart text-primary mr-2"></i> 面积
+                            </h3>
+                            <p class="text-sm">约960万平方千米</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章列表 -->
+        <div class="space-y-8">
+            <!-- 文章1 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">秦始皇的统一大业</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="text-lg mb-4">在战国末期的历史舞台上，秦始皇嬴政宛如一颗耀眼的巨星，以雄才大略和果敢的行动力，完成了统一六国的大业，建立了中国历史上第一个大一统王朝——秦朝。</p>
+                    <p class="mb-4">公元前238年，嬴政铲除了嫪毐和吕不韦两大势力，开始亲政。随后，他任用李斯、尉缭等人才，制定了“灭诸侯，成帝业，为天下一统”的战略方针。从公元前230年到公元前221年，秦国先后灭掉韩、赵、魏、楚、燕、齐六国，完成统一大业。</p>
+                    <p class="mb-4">统一六国后，秦始皇采取了一系列巩固统一的措施。在政治上，他创立了皇帝制度，自称“始皇帝”，建立了三公九卿制和郡县制，加强了中央集权；在经济上，他统一度量衡、货币和文字，促进了经济和文化的交流与发展；在军事上，他派蒙恬北击匈奴，修筑长城，南征百越，扩大了秦朝的疆域。</p>
+                    <blockquote class="border-l-4 border-primary pl-4 italic my-6">
+                        <p>“朕为始皇帝，后世以计数，二世、三世至于万世，传之无穷。”</p>
+                        <footer class="text-right mt-2">—— 秦始皇</footer>
+                    </blockquote>
+                    <p class="mb-4">然而，秦始皇的统治也存在着一些问题。他实行严刑峻法，繁重的赋税和徭役使得百姓生活困苦，民怨沸腾。秦朝的统治仅仅维持了十五年，就被农民起义推翻。但不可否认，秦始皇的统一大业对中国历史产生了深远的影响，他奠定了中国两千多年政治制度的基本格局。</p>
+                </div>
+            </article>
+
+            <!-- 文章2 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国人工智能领域的展露锋芒·DeepSeek</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="mb-4">在2025年初，DeepSeek犹如一颗耀眼的新星，于全球人工智能领域迅速蹿红，成为众人瞩目的焦点。其爆火绝非偶然，背后蕴含着技术革新、成本优势等诸多深层次因素。</p>
+                    <p class="mb-4">DeepSeek在思考方式上与其他大模型存在显著差异。传统大模型多依赖大规模的监督学习，需耗费海量人工标注数据来训练模型，引导其生成预期输出。而DeepSeek开创性地构建无监督强化学习训练体系，大幅降低对人工标注数据的依赖 。模型如同一位在知识海洋中自我探索的学者，通过不断自我博弈、试错，激活自身推理潜能。例如，面对复杂的逻辑推理问题，传统模型可能基于大量已标注的相似案例来寻找答案，而DeepSeek则凭借强化学习框架，尝试从问题本质出发，自行推导解题思路，在数学和逻辑测试中，其表现超越了诸如OpenAI O1等知名模型，推理能力得到充分验证。</p>
+                    <p class="mb-4">训练成本层面，DeepSeek堪称行业“成本杀手”。以其推出的DeepSeek-V3为例，完成训练仅耗资约600万美元，而与之性能相当的美国同类模型，如GPT-4的训练成本却高达6300万美元左右。这般巨大的成本差距，主要源于DeepSeek在技术路线和硬件利用上的创新。在技术上，其采用混合专家架构（MoE）和多头潜在注意力（MLA）机制，大幅减少显存占用，相较于传统架构，显存占用量仅为其5%-13%，使得在同等硬件条件下，能够支持更大规模的参数，如DeepSeek-V3达到6710亿参数 。在硬件选择上，DeepSeek在英伟达高端芯片受限的情况下，提前储备英伟达A100芯片，并混合使用创新训练技术搭配较低端的GPU，成功绕过美国出口限制，实现低成本高效训练。</p>
+                    <p class="mb-4">从市场契合度来看，2025年初，全球AI市场对高效、低成本且具有创新性的模型需求极为迫切。彼时，主流产品如ChatGPT等，或因政策限制部分地区访问受限，或因算力瓶颈、商业化策略调整等，出现市场空白。DeepSeek精准捕捉到这一市场痛点，以亲民的价格、强大的性能迅速填补空缺。无论是专业人士，还是普通大众，都能轻松使用DeepSeek解决各类问题，例如医疗人员借助其辅助诊断，学生用它辅助学习，普通用户用它进行日常写作、创意构思等。</p>
+                    <p class="mb-4">此外，DeepSeek的开源策略也为其爆火添了一把柴。与部分巨头严守技术黑箱不同，DeepSeek将模型架构、训练方法等全面向全球开发者开放。这一举措吸引了海量开发者投身其生态建设，大家基于DeepSeek进行二次开发、优化，形成技术迭代的正向循环。一时间，网络上掀起复现DeepSeek的热潮，加州大学伯克利分校、香港科技大学等高校，以及知名人工智能公司HuggingFace等纷纷成功复现，甚至仅用几十美元成本就能完成，进一步扩大了DeepSeek的影响力与传播范围。</p>
+                    <p>综上所述，独特的思考方式、极致的训练成本优势、精准的市场定位以及开放的开源策略，共同铸就了DeepSeek在2025年初的爆火，使其成为中国人工智能领域崛起的典型代表，也为全球AI发展注入全新活力，推动行业朝着更高效、更普惠的方向大步迈进 。</p>
+                </div>
+            </article>
+
+            <!-- 文章3 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">改革开放：中国发展的历史性转折</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="text-lg mb-4">1978年12月，中国共产党十一届三中全会在北京召开，作出了实行改革开放的重大决策。这一决策，开启了中国社会主义现代化建设的新时期，是中国发展的历史性转折。</p>
+                    <p class="mb-4">改革开放以来，中国在经济、政治、文化、社会等各个领域都取得了举世瞩目的成就。在经济领域，中国实行了社会主义市场经济体制，推动了经济的快速发展，成为世界第二大经济体；在政治领域，中国坚持党的领导、人民当家作主、依法治国有机统一，不断推进社会主义民主政治建设；在文化领域，中国加强了文化建设，弘扬了中华优秀传统文化，培育和践行了社会主义核心价值观；在社会领域，中国加强了社会保障和改善民生，提高了人民的生活水平。</p>
+                    <h3 class="text-xl font-bold my-4">改革开放的意义</h3>
+                    <p class="mb-4">改革开放是中国发展进步的必由之路，是决定当代中国命运的关键一招。它不仅改变了中国的面貌，也影响了世界的发展格局。改革开放以来，中国与世界的联系日益紧密，在国际舞台上发挥着越来越重要的作用。</p>
+                    <p class="mb-4">展望未来，中国将继续坚定不移地推进改革开放，不断开创中国特色社会主义事业的新局面。</p>
+                </div>
+            </article>
+
+            <!-- 文章4 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国古典文学之《红楼梦》</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="text-lg mb-4">《红楼梦》是中国古典文学的巅峰之作，被誉为“中国封建社会的百科全书”。它以贾、史、王、薛四大家族的兴衰为背景，以贾宝玉与林黛玉、薛宝钗的爱情婚姻悲剧为主线，从多个角度描写了18世纪上半叶中国封建社会的生活百态。</p>
+                    <p class="mb-4">《红楼梦》的作者曹雪芹，出身于清代内务府正白旗包衣世家，他早年过着富贵奢华的生活，后因家道中落，生活陷入困境。在这种情况下，曹雪芹开始创作《红楼梦》，以自己的亲身经历为素材，反映了封建社会的种种矛盾和问题。</p>
+                    <h3 class="text-xl font-bold my-4">《红楼梦》的艺术价值</h3>
+                    <p class="mb-4">《红楼梦》具有极高的艺术价值，它的人物形象鲜明生动，情节跌宕起伏，语言优美细腻。书中描写了众多的人物，上至贵族阶层，下至平民百姓，每个人物都有其独特的性格和命运。《红楼梦》的情节设计巧妙，充满了悬念和惊喜，让人读起来欲罢不能。此外，《红楼梦》的语言艺术也达到了很高的水平，它运用了大量的诗词、俗语、歇后语等，使小说具有浓郁的文化气息。</p>
+                    <blockquote class="border-l-4 border-primary pl-4 italic my-6">
+                        <p>“满纸荒唐言，一把辛酸泪。都云作者痴，谁解其中味？”</p>
+                        <footer class="text-right mt-2">—— 曹雪芹</footer>
+                    </blockquote>
+                    <p class="mb-4">《红楼梦》不仅是中国文学的瑰宝，也是世界文学宝库中的一颗璀璨明珠。它对后世文学产生了深远的影响，被誉为中国古典小说的巅峰之作。</p>
+                </div>
+            </article>
+
+            <!-- 文章5 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国新能源汽车的领航员・比亚迪</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="text-lg mb-4">在全球新能源汽车产业蓬勃发展的浪潮中，比亚迪无疑是最为耀眼的弄潮儿，堪称中国新能源汽车的领航员。其凭借敢为人先的勇气、持之以恒的创新以及高瞻远瞩的战略布局，在新能源汽车领域书写了一个又一个传奇。</p>
+                    <p class="mb-4">比亚迪的发展历程，就是一部不断突破、不断创新的奋斗史。2003年，比亚迪毅然跨界造车，怀揣着对新能源战略的坚定信念，从最基础的汽车机械配件开始摸索前行。2008年，比亚迪推出全球首款量产插混车型F3DM，率先在新能源汽车领域种下希望的种子。此后，比亚迪持续深耕技术研发，历经多年沉淀，刀片电池、DM-i超级混动技术、e平台3.0等核心技术相继问世，每一项技术的突破都为其在市场竞争中增添了强劲动力。</p>
+                    <h3 class="text-xl font-bold my-4">技术创新：比亚迪的核心密码</h3>
+                    <p class="mb-4">技术创新是比亚迪领航新能源汽车产业的核心密码。比亚迪坚信，只有掌握核心技术，才能在激烈的市场竞争中立于不败之地。为此，比亚迪不惜投入巨额资金用于研发。仅今年前三季度，比亚迪研发投入就达到333亿元，同比增长34%，创下历史新高。长期以来，比亚迪的研发投入在过去14年中有13年高于净利润，累计研发投入超1600亿，智能化下半场还将投入1000亿元。如此大规模的研发投入，让比亚迪拥有了11大研究院、11万工程师，成为全球研发人员最多的车企。也正是凭借这庞大的研发团队，比亚迪的技术鱼池硕果累累，截至目前已成功申请超过13,000项专利，在电池技术、混动技术等关键领域遥遥领先，众多专利技术成为其在市场竞争中的制胜法宝。</p>
+                    <h3 class="text-xl font-bold my-4">市场表现：一骑绝尘</h3>
+                    <p class="mb-4">在市场表现上，比亚迪更是一骑绝尘。2024年，比亚迪成为首家连续单月销量突破50万辆大关的中国车企，刷新了全球车企在新能源领域的月销纪录。旗下品牌矩阵全面发力，王朝网与海洋网作为销量基本盘，精准满足大众品质出行需求，秦系列、海鸥等车型凭借亲民价格、出色性能深受消费者喜爱。腾势、方程豹和仰望三大高端品牌则进一步拓宽品牌边界，提升品牌形象。腾势在高端MPV和SUV领域站稳脚跟，方程豹以"越野 + 新能源"开辟新赛道，仰望凭借易四方平台打造百万级高端产品，在全球顶级新能源行列中占据一席之地。</p>
+                    <h3 class="text-xl font-bold my-4">推动行业发展</h3>
+                    <p class="mb-4">比亚迪的成功，不仅成就了自身，更推动了中国新能源汽车产业的整体发展。在技术创新上，比亚迪的突破带动了国内众多企业加大研发投入，促进整个产业技术水平的提升；在市场层面，比亚迪的高市场份额打破了传统竞争格局，促使外资品牌加速电动化转型，同时也为中国品牌出海提供了宝贵经验；在产业链方面，比亚迪庞大的销量带动了上下游产业协同发展，增强了供应链韧性，完善了产业生态。</p>
+                    <p>展望未来，比亚迪将继续凭借技术创新、战略布局等优势，在全球新能源汽车市场中乘风破浪。相信在比亚迪等众多优秀企业的共同努力下，中国新能源汽车产业必将在全球舞台上绽放更加耀眼的光芒，实现从汽车大国向汽车强国的华丽转身。</p>
+                </div>
+            </article>
+
+            <!-- 文章6 -->
+            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国美食文化·八大菜系之川菜</h2>
+                <div class="text-center text-gray-500 text-sm mb-6">
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
+                </div>
+                <div class="prose max-w-none">
+                    <p class="text-lg mb-4">中国美食文化源远流长，博大精深，其中八大菜系更是各具特色。川菜作为八大菜系之一，以其麻辣鲜香的口味和丰富多样的菜品而闻名于世。</p>
+                    <h3 class="text-xl font-bold my-4">川菜的特点</h3>
+                    <p class="mb-4">川菜的特点是麻辣鲜香、口味多样、百菜百味。它善于运用辣椒、花椒、豆瓣等调料，形成了独特的麻辣风味。川菜的菜品丰富多样，包括炒菜、炖菜、凉菜、汤菜等，其中最具代表性的菜品有麻婆豆腐、回锅肉、鱼香肉丝、宫保鸡丁等。</p>
+                    <h3 class="text-xl font-bold my-4">川菜的文化内涵</h3>
+                    <p class="mb-4">川菜不仅是一种美食，更是一种文化。它体现了四川人民的热情好客、乐观豁达的性格特点。在四川，人们喜欢在餐桌上聚在一起，品尝美食，交流感情。川菜的文化内涵也反映了中国传统文化中的“和”的思想，即和谐、包容、共生。</p>
+                    <p class="mb-4">如今，川菜已经走向了世界，受到了越来越多的人的喜爱。无论是在国内还是在国外，都可以品尝到正宗的川菜。</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-primary text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-lg font-bold">赤县神州古今漫谈</h3>
+                    <p class="text-white/80 text-sm">探索中国的历史、文化以及现代见闻</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm">
+                        [发布地] 中国-北京<br>
+                        [网站创建时间] 2025年7月15日<br>
+                        [网页名称] 赤县神州古今漫谈<br>
+                        [主要内测者] 我不是徐某人（QQ）
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-white/20 mt-6 pt-6 text-center text-sm text-white/70">
+                &copy; 2025 赤县神州古今漫谈
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const sun = document.getElementById('sun');
+        const moon = document.getElementById('moon');
+        const dayBg = document.getElementById('day-bg');
+        const nightBg = document.getElementById('night-bg');
+        const body = document.body;
+
+        // 计算正确的位移量
+        const calculateTranslateX = () => {
+            const buttonWidth = themeToggle.offsetWidth;
+            const iconWidth = toggleIcon.offsetWidth;
+            const borderWidth = 2; // 按钮边框宽度
+            return buttonWidth - iconWidth - (borderWidth * 2);
+        };
+
+        // 检查本地存储中的主题偏好
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+        // 初始化主题
+        if (isDarkMode) {
+            applyDarkMode();
+        } else {
+            // 确保太阳在最左侧
+            toggleIcon.style.left = '2px';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                applyLightMode();
+                localStorage.setItem('darkMode', 'false');
+            } else {
+                applyDarkMode();
+                localStorage.setItem('darkMode', 'true');
+            }
+        });
+
+        function applyDarkMode() {
+            body.classList.add('dark-mode');
+            const translateX = calculateTranslateX() - 2; // 微调以确保完全贴合
+            toggleIcon.style.transform = `translateX(${translateX}px)`;
+            setTimeout(() => {
+                sun.style.opacity = '0';
+                moon.style.opacity = '1';
+            }, 300);
+            dayBg.style.opacity = '0';
+            nightBg.style.opacity = '1';
+        }
+
+        function applyLightMode() {
+            body.classList.remove('dark-mode');
+            sun.style.opacity = '1';
+            moon.style.opacity = '0';
+            setTimeout(() => {
+                toggleIcon.style.transform = 'translateX(0)';
+            }, 100);
+            dayBg.style.opacity = '1';
+            nightBg.style.opacity = '0';
+        }
+    </script>
+    <!-- 音频播放核心组件（放在页面底部） -->
+<audio id="myAudio" src="赤县神州古今漫谈.mp3" loop></audio>
+<!-- 音乐控制脚本（放在页面最底部的script中） -->
+<script>
+function toggleMusic() {
+  const audio = document.getElementById("myAudio");
+  const icon = document.getElementById("musicIcon");
+  const button = icon.parentElement;
+  
+  if (audio.paused) {
+    // 播放
+    audio.play().then(() => {
+      button.style.background = "#3b82f6";
+      icon.className = "fa fa-pause";
+      icon.style.color = "white";
+    }).catch(e => {
+      alert("播放失败: " + e.message);
+      console.log(e);
+    });
+  } else {
+    // 暂停
+    audio.pause();
+    button.style.background = "white";
+    icon.className = "fa fa-music";
+    icon.style.color = "#3b82f6";
+  }
+}
+</script>
+</body>
+
+</html>
