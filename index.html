@@ -114,7 +114,7 @@ const icon = musicButton.querySelector('i');
 
 <body class="bg-neutral text-neutral-dark font-sans min-h-screen flex flex-col">
 <!-- 音乐播放按钮（放在夜间模式按钮上方） -->
-<button onclick="toggleMusic()" style="position:fixed; bottom:6rem; right:1.5rem; width:3rem; height:3rem; border-radius:50%; background:white; border:2px solid #3b82f6; cursor:pointer; z-index:999;">
+<button id="musicButton" onclick="toggleMusic()" style="position:fixed; bottom:6rem; right:1.5rem; width:50px; height:50px; border-radius:50%; background:white; border:2px solid #3b82f6; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer; z-index:999; transition: all 0.3s ease;">
   <i id="musicIcon" class="fa fa-music" style="color:#3b82f6; font-size:1.2rem;"></i>
 </button>
     <!-- 夜间模式按钮 -->
@@ -202,19 +202,22 @@ const icon = musicButton.querySelector('i');
         <div class="space-y-4">
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">绑定时间：</span>
-                <span class="text-gray-800 dark:text-white">2025年8月1日</span>
+                <!-- 添加ID：bindTime -->
+                <span id="bindTime" class="text-gray-800 dark:text-white">2025年8月1日</span>
             </div>
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">绑定音乐：</span>
-                <span class="text-gray-800 dark:text-white">相亲相爱 - 丁于,姚贝娜,曹芙嘉,马海生</span>
+                <!-- 添加ID：musicName -->
+                <span id="musicName" class="text-gray-800 dark:text-white">相亲相爱 - 丁于,姚贝娜,曹芙嘉,马海生</span>
             </div>
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">续播时间：</span>
-                <span class="text-gray-800 dark:text-white">2025年8月1日~2025年9月30日</span>
+                <!-- 添加ID：playTime -->
+                <span id="playTime" class="text-gray-800 dark:text-white">2025年8月1日~2025年9月30日</span>
             </div>
         </div>
     </div>
-</div>        
+</div>      
         <!-- 进度指示器 -->
         <div class="mb-8">
             <div class="flex justify-between items-center mb-2">
@@ -471,32 +474,113 @@ const icon = musicButton.querySelector('i');
         }
     </script>
     <!-- 音频播放核心组件（放在页面底部） -->
-<audio id="myAudio" src="赤县神州古今漫谈.mp3" loop></audio>
+<audio id="myAudio" loop preload="metadata"></audio>
 <!-- 音乐控制脚本（放在页面最底部的script中） -->
 <script>
+// 在现有script中添加页面加载完成事件
+window.addEventListener('DOMContentLoaded', function() {
+  // 初始加载时就设置正确的音乐信息
+  updateMusicInfoByTime();
+  
+  // 启动定时器，每5分钟检查一次时间（避免过于频繁的检查）
+  setInterval(updateMusicInfoByTime, 5 * 60 * 1000);
+});
+
+// 单独的函数用于更新音乐信息
+// 全局变量记录当前播放状态
+// 全局变量
+let currentAudioSrc = ""; // 记录当前使用的音频源
+
+window.addEventListener('DOMContentLoaded', function() {
+  const audio = document.getElementById("myAudio");
+  const button = document.getElementById("musicButton");
+  const icon = document.getElementById("musicIcon");
+  
+  // 初始化音乐
+  updateMusicInfoByTime();
+  setInterval(updateMusicInfoByTime, 5 * 60 * 1000);
+  
+  // 监听音频状态变化，同步按钮样式
+  audio.addEventListener('play', function() {
+    button.style.background = "#3b82f6";
+    icon.className = "fa fa-pause";
+    icon.style.color = "white";
+  });
+  
+  audio.addEventListener('pause', function() {
+    button.style.background = "white";
+    icon.className = "fa fa-music";
+    icon.style.color = "#3b82f6";
+  });
+});
+
+function updateMusicInfoByTime() {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const isDaytime = (hours > 5 || (hours === 5 && minutes >= 30)) && 
+                   (hours < 18 || (hours === 18 && minutes < 30));
+  
+  const bindTimeEl = document.getElementById('bindTime');
+  const musicNameEl = document.getElementById('musicName');
+  const playTimeEl = document.getElementById('playTime');
+  const audio = document.getElementById("myAudio");
+  
+  // 确定当前应该播放的音乐
+  let newSrc = isDaytime ? "赤县神州古今漫谈.mp3" : "赤县神州古今漫谈（夜间）.mp3";
+  
+  // 只有当音乐源变化时才更新
+  if (currentAudioSrc !== newSrc) {
+    // 记录当前播放位置
+    const currentTime = audio.currentTime;
+    
+    // 更新音乐信息
+    if (isDaytime) {
+      bindTimeEl.textContent = "2025年8月1日";
+      musicNameEl.textContent = "相亲相爱 - 丁于,姚贝娜,曹芙嘉,马海生";
+      playTimeEl.textContent = "2025年8月1日~2025年9月30日";
+    } else {
+      bindTimeEl.textContent = "2025年8月21日";
+      musicNameEl.textContent = "去云端 - 音速行星";
+      playTimeEl.textContent = "2025年8月21日~2025年9月30日";
+    }
+    
+    // 更新音频源并保持播放状态
+    const wasPlaying = !audio.paused;
+    currentAudioSrc = newSrc;
+    audio.src = newSrc;
+    
+    // 加载新音频后恢复播放状态和位置（仅对同一音频有效）
+    audio.addEventListener('loadedmetadata', function onLoadedMetadata() {
+      if (wasPlaying) {
+        audio.play();
+      }
+      // 移除事件监听器避免重复触发
+      audio.removeEventListener('loadedmetadata', onLoadedMetadata);
+    });
+  }
+}
+
 function toggleMusic() {
   const audio = document.getElementById("myAudio");
-  const icon = document.getElementById("musicIcon");
-  const button = icon.parentElement;
+  
+  // 确保使用正确的音频源
+  updateMusicInfoByTime();
   
   if (audio.paused) {
-    // 播放
-    audio.play().then(() => {
-      button.style.background = "#3b82f6";
-      icon.className = "fa fa-pause";
-      icon.style.color = "white";
-    }).catch(e => {
+    // 继续播放（不是重新开始）
+    audio.play().catch(e => {
       alert("播放失败: " + e.message);
       console.log(e);
     });
   } else {
-    // 暂停
+    // 暂停播放
     audio.pause();
-    button.style.background = "white";
-    icon.className = "fa fa-music";
-    icon.style.color = "#3b82f6";
   }
 }
+
+// 页面加载完成后初始化音乐
+window.addEventListener('DOMContentLoaded', initMusic);
 </script>
 </body>
 
