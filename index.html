@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -52,6 +51,54 @@ const icon = musicButton.querySelector('i');
                 transform: translateY(-5px);
                 box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             }
+
+            .fade-in-up {
+                animation: fadeInUp 0.6s ease-out forwards;
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            .stagger-1 {
+                animation-delay: 0.1s;
+            }
+
+            .stagger-2 {
+                animation-delay: 0.2s;
+            }
+
+            .stagger-3 {
+                animation-delay: 0.3s;
+            }
+
+            .stagger-4 {
+                animation-delay: 0.4s;
+            }
+
+            .stagger-5 {
+                animation-delay: 0.5s;
+            }
+
+            .stagger-6 {
+                animation-delay: 0.6s;
+            }
+
+            .scroll-fade {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: opacity 0.6s ease, transform 0.6s ease;
+            }
+
+            .scroll-fade.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 网页进入平滑动画 */
@@ -87,6 +134,27 @@ const icon = musicButton.querySelector('i');
             background-color: #4a5568;
         }
 
+        body.dark-mode #music-icon {
+            color: #3b82f6 !important;
+        }
+
+        body.dark-mode #music-toggle .bg-blue-100 {
+            background-color: #dbeafe !important;
+        }
+
+        body.dark-mode #theme-toggle span,
+        body.dark-mode #music-toggle span {
+            color: white !important;
+        }
+
+        body.dark-mode #theme-toggle .theme-icon-bg {
+            background-color: #4b5563 !important;
+        }
+
+        body.dark-mode #settings-toggle i {
+            color: white !important;
+        }
+
         /* 夜间模式按钮样式 */
         #dark-mode-toggle {
             position: fixed;
@@ -114,67 +182,74 @@ const icon = musicButton.querySelector('i');
 </head>
 
 <body class="bg-neutral text-neutral-dark font-sans min-h-screen flex flex-col">
-<!-- 音乐播放按钮（放在夜间模式按钮上方） -->
-<button id="musicButton" onclick="toggleMusic()" style="position:fixed; bottom:6rem; right:1.5rem; width:50px; height:50px; border-radius:50%; background:white; border:2px solid #3b82f6; box-shadow:0 2px 8px rgba(0,0,0,0.2); cursor:pointer; z-index:999; transition: all 0.3s ease;">
-  <i id="musicIcon" class="fa fa-music" style="color:#3b82f6; font-size:1.2rem;"></i>
-</button>
-    <!-- 夜间模式按钮 -->
-    <button id="theme-toggle"
-        class="fixed bottom-6 right-6 w-32 h-14 rounded-full border-2 border-yellow-400 bg-white shadow-lg overflow-hidden transition-all duration-300 ease-in-out z-50 cursor-pointer hover:scale-105 active:scale-95">
-        <div class="relative w-full h-full overflow-hidden">
-            <!-- 白天模式背景 - 云彩 -->
-            <div id="day-bg"
-                class="absolute inset-0 bg-blue-100 transition-opacity duration-500 ease-in-out">
-                <div class="absolute top-3 left-2 w-12 h-4 bg-white rounded-full"></div>
-                <div class="absolute top-5 left-7 w-10 h-4 bg-white rounded-full"></div>
-                <div class="absolute top-3 right-2 w-12 h-4 bg-white rounded-full"></div>
-                <div class="absolute top-5 right-7 w-10 h-4 bg-white rounded-full"></div>
-            </div>
-
-            <!-- 夜晚模式背景 - 星星 -->
-            <div id="night-bg"
-                class="absolute inset-0 bg-black opacity-0 transition-opacity duration-500 ease-in-out">
-                <!-- 星星只分布在左侧区域 -->
-                <div class="absolute top-3 left-3 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"></div>
-                <div class="absolute top-6 left-8 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"
-                    style="animation-delay: 0.5s"></div>
-                <div class="absolute top-4 left-12 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"
-                    style="animation-delay: 1s"></div>
-                <div class="absolute bottom-3 left-5 w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse"
-                    style="animation-delay: 1.5s"></div>
-                <div class="absolute bottom-5 left-10 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"
-                    style="animation-delay: 2s"></div>
-            </div>
-
-            <!-- 太阳/月亮组合 -->
-            <div id="toggle-icon"
-                class="absolute top-1 w-12 h-12 rounded-full transition-transform duration-700 ease-in-out transform">
-                <!-- 太阳 -->
-                <div id="sun"
-                    class="absolute inset-0 w-full h-full bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50 transition-opacity duration-300 ease-in-out">
-                    <!-- 太阳光芒 -->
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="absolute w-14 h-1.5 bg-yellow-400 rounded-full"></div>
-                        <div class="absolute w-1.5 h-14 bg-yellow-400 rounded-full"></div>
-                        <div class="absolute w-10 h-1.5 bg-yellow-400 rounded-full transform rotate-45"></div>
-                        <div class="absolute w-1.5 h-10 bg-yellow-400 rounded-full transform rotate-45"></div>
-                    </div>
-                </div>
-
-                <!-- 月亮 -->
-                <div id="moon"
-                    class="absolute inset-0 w-full h-full bg-gray-200 rounded-full shadow-lg opacity-0 transition-opacity duration-300 ease-in-out">
-                    <!-- 月亮坑洼 -->
-                    <div class="absolute top-2 left-2 w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <div class="absolute top-4 right-3 w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                    <div class="absolute bottom-3 left-3 w-2.5 h-2.5 bg-gray-300 rounded-full"></div>
-                </div>
-            </div>
-        </div>
+    
+    <!-- 设置按钮 -->
+    <button id="settings-toggle" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-white shadow-lg border-2 border-gray-200 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 hover:border-primary z-50">
+        <i class="fa fa-cog text-gray-600 text-xl transition-transform duration-300 hover:rotate-90 hover:text-primary"></i>
     </button>
 
+    <!-- 遮罩层 -->
+    <div id="settings-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 invisible transition-all duration-300"></div>
+
+    <!-- 设置面板 -->
+    <div id="settings-panel" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-80 z-50 opacity-0 invisible transition-all duration-300 scale-95">
+        <h3 class="text-xl font-bold text-primary mb-6 text-center">设置</h3>
+        
+        <div class="space-y-4">
+            <!-- 夜间模式按钮 -->
+            <button id="theme-toggle" class="w-full h-12 rounded-xl border-2 border-yellow-400 bg-white shadow-md overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 relative">
+                <div class="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center theme-icon-bg">
+                    <i id="theme-icon" class="fa fa-sun text-yellow-500 text-lg"></i>
+                </div>
+                <span class="absolute left-14 top-1/2 transform -translate-y-1/2 text-sm font-medium text-gray-700">夜间模式</span>
+            </button>
+
+            <!-- 音乐播放按钮 -->
+            <button id="music-toggle" class="w-full h-12 rounded-xl border-2 border-blue-400 bg-white shadow-md overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 relative">
+                <div class="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i id="music-icon" class="fa fa-music text-blue-500 text-lg"></i>
+                </div>
+                <span class="absolute left-14 top-1/2 transform -translate-y-1/2 text-sm font-medium text-gray-700">音乐播放</span>
+            </button>
+        </div>
+    </div>
+  
+      <!-- 文章目录 -->
+    <div class="fixed left-4 top-1/2 transform -translate-y-1/2 z-40">
+        <div id="toc-container" class="relative">
+            <!-- 目录按钮 -->
+            <div id="toc-toggle" class="w-12 h-40 bg-white rounded-full shadow-lg flex items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-xl border-2 border-gray-200 hover:border-primary hover:bg-gray-100">
+                <i class="fa fa-list text-gray-600 text-xl transition-transform duration-300 hover:rotate-90 hover:text-primary"></i>
+            </div>
+            <!-- 目录内容 -->
+            <div id="toc-content" class="absolute left-14 top-0 w-64 bg-white rounded-xl shadow-lg border-2 border-gray-200 p-4 opacity-0 invisible transition-all duration-500 transform -translate-x-4 hover:shadow-2xl hover:border-primary">
+                <h3 class="text-lg font-bold text-primary mb-4 text-center">文章目录</h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="#article-1" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">秦始皇的统一大业</a>
+                    </li>
+                    <li>
+                        <a href="#article-2" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">中国人工智能领域的展露锋芒·DeepSeek</a>
+                    </li>
+                    <li>
+                        <a href="#article-3" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">改革开放：中国发展的历史性转折</a>
+                    </li>
+                    <li>
+                        <a href="#article-4" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">现代春节的多元度过方式</a>
+                    </li>
+                    <li>
+                        <a href="#article-5" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">中国新能源汽车的领航员・比亚迪</a>
+                    </li>
+                    <li>
+                        <a href="#article-6" class="block px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors text-neutral-dark">雄安新区的建设意义到底是什么？</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- 顶部导航 -->
-    <header class="bg-primary text-white shadow-lg">
+    <header class="bg-primary text-white shadow-lg fade-in-up">
         <div class="container mx-auto px-4 py-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between">
                 <div class="flex items-center mb-4 md:mb-0">
@@ -195,7 +270,7 @@ const icon = musicButton.querySelector('i');
     <!-- 主内容区 -->
     <main class="flex-grow container mx-auto px-4 py-8">
         <!-- 绑定音乐信息块 -->
-<div class="mb-8 bg-white dark:bg-blue-400 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
+<div class="mb-8 bg-white dark:bg-blue-400 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl scroll-fade">
     <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-3">
         <h2 class="text-xl font-bold text-white">站嵌音乐</h2>
     </div>
@@ -204,23 +279,23 @@ const icon = musicButton.querySelector('i');
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">绑定时间：</span>
                 <!-- 添加ID：bindTime -->
-                <span id="bindTime" class="text-gray-800 dark:text-white">2025年8月1日</span>
+                <span id="bindTime" class="text-gray-800 dark:text-white">2026年2月6日</span>
             </div>
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">绑定音乐：</span>
                 <!-- 添加ID：musicName -->
-                <span id="musicName" class="text-gray-800 dark:text-white">相亲相爱 - 丁于,姚贝娜,曹芙嘉,马海生</span>
+                <span id="musicName" class="text-gray-800 dark:text-white">辞九门回忆（误闯天家 劝余放下手中砂） - 纳米</span>
             </div>
             <div class="flex items-center">
                 <span class="w-24 text-gray-600 dark:text-gray-300 font-medium">续播时间：</span>
                 <!-- 添加ID：playTime -->
-                <span id="playTime" class="text-gray-800 dark:text-white">2025年8月1日~2025年9月30日</span>
+                <span id="playTime" class="text-gray-800 dark:text-white">2026年2月6日~2025年2月15日</span>
             </div>
         </div>
     </div>
 </div>      
         <!-- 进度指示器 -->
-        <div class="mb-8">
+        <div class="mb-8 scroll-fade">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">平台文章总数</h2>
                 <span class="text-sm text-gray-600">6/20</span>
@@ -230,19 +305,44 @@ const icon = musicButton.querySelector('i');
             </div>
         </div>
         <!-- 中国信息卡片 -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 transform transition-all duration-300 hover:shadow-2xl">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 transform transition-all duration-300 hover:shadow-2xl scroll-fade">
             <div class="relative">
-                <img src="Palace Museum.png" class="w-full h-64 object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                    <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-white p-6">中华人民共和国</h2>
+                <!-- 轮播容器 -->
+                <div class="slideshow-container relative w-full h-64 overflow-hidden">
+                    <!-- 轮播图片 -->
+                    <div class="slides absolute inset-0 transition-opacity duration-1000 opacity-100">
+                        <img src="Palace Museum.png" class="w-full h-full object-cover">
+                    </div>
+                    <div class="slides absolute inset-0 transition-opacity duration-1000 opacity-0">
+                        <img src="北京国贸.jpg" class="w-full h-full object-cover">
+                    </div>
+                    <div class="slides absolute inset-0 transition-opacity duration-1000 opacity-0">
+                        <img src="兵马俑.jpg" class="w-full h-full object-cover">
+                    </div>
+                    <div class="slides absolute inset-0 transition-opacity duration-1000 opacity-0">
+                        <img src="广州.jpg" class="w-full h-full object-cover">
+                    </div>
+                    <div class="slides absolute inset-0 transition-opacity duration-1000 opacity-0">
+                        <img src="上海.jpg" class="w-full h-full object-cover">
+                    </div>
+                    <!-- 轮播控制渐变 -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-white p-6">中华人民共和国</h2>
+                    </div>
                 </div>
             </div>
             <div class="p-6 md:p-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2">
                         <div class="prose max-w-none">
-                            <p>中华人民共和国（英语：People's Republic of China），简称“中国”，是位于亚洲东部、太平洋西岸的社会主义国家。中国是世界上历史最悠久的国家之一，有着光辉灿烂的文化和光荣的革命传统。</p>
-                            <p>-----</p>
+                            <h2 class="font-bold text-xl mb-3">概要</h2>
+                            <p class="mb-3">中华人民共和国（英语：People's Republic of China），简称“中国”，是位于亚洲东部、太平洋西岸的社会主义国家，陆地总面积约960万平方千米，海域总面积约473万平方千米，首都为北京，拥有34个省级行政区。中国是联合国创始会员国之一，也是联合国安全理事会五个常任理事国之一，在全球治理体系中发挥着不可替代的重要作用。</p>
+                            <p class="mb-3">中国是世界上历史最悠久的国家之一，积淀了光辉灿烂的中华优秀传统文化，也孕育了光荣的革命传统，形成了独具特色的文化体系。</p>
+                            <p class="mb-3">作为全球第二大经济体，拥有全球最完整的产业体系，是世界制造业核心，同时以超大规模市场和持续增长的内需成为全球经济增长的重要引擎，在包容性增长和赋能全球经济发展中展现出独特价值。</p>
+                            <p class="mb-3">中国在新能源领域发展迅猛，已成为全球最大的可再生能源生产国和应用国，风电、光伏装机容量连续多年稳居世界第一，新能源汽车产销量占全球比重超过60%，并积极推动绿色“一带一路”建设，为全球能源转型与碳中和目标贡献中国方案。</p>
+                            <p class="mb-3">中国始终将科技作为发展核心驱动力，持续加大科创投入，国家综合创新能力跻身全球前十，人工智能领域构建起完整产业体系，核心技术与应用落地均走在世界前列，深度赋能千行百业。</p>
+                            <p>同时正重点布局量子科技、生物制造、具身智能、6G、氢能与核聚变能等未来产业，在量子通信、人形机器人等领域实现全球领跑，载人航天、探月工程等战略高技术领域不断取得新跨越，依托世界第一的科技人力资源规模，推动人口红利向人才红利转变，以科技创新引领现代化产业体系建设，助力经济高质量发展。</p>
+                            <h2 class="font-bold text-xl mb-3 mt-6">基本信息</h2>
                             <p>首都：北京</p>
                             <p>成立时间：1949年10月1日</p>
                             <p>官方语言：普通话</p>
@@ -258,18 +358,18 @@ const icon = musicButton.querySelector('i');
                         <h3 class="font-bold text-lg mb-3 flex items-center">
                             <i class="fa fa-map-marker text-primary mr-2"></i> 地理位置
                         </h3>
-                        <p class="text-sm">中国位于亚洲东部，太平洋西岸，陆地总面积约960万平方公里，海域总面积约473万平方公里。东邻朝鲜，北邻蒙古，东北邻俄罗斯，西北邻哈萨克斯坦、吉尔吉斯斯坦、塔吉克斯坦，西和西南与阿富汗、巴基斯坦、印度、尼泊尔、不丹等国家接壤，南与缅甸、老挝、越南相连。东部和东南部同韩国、日本、菲律宾、文莱、马来西亚、印度尼西亚隔海相望。</p>
+                        <p class="text-sm">中国位于亚洲东部，太平洋西岸，陆地总面积约960万平方千米，海域总面积约473万平方千米。东邻朝鲜，北邻蒙古，东北邻俄罗斯，西北邻哈萨克斯坦、吉尔吉斯斯坦、塔吉克斯坦，西和西南与阿富汗、巴基斯坦、印度、尼泊尔、不丹等国家接壤，南与缅甸、老挝、越南相连。东部和东南部同韩国、日本、菲律宾、文莱、马来西亚、印度尼西亚隔海相望。</p>
                         <div class="mt-4">
                             <h3 class="font-bold text-lg mb-3 flex items-center">
                                 <i class="fa fa-users text-primary mr-2"></i> 人口
                             </h3>
-                            <p class="text-sm">约14.1178亿（2020年数据）</p>
+                            <p class="text-sm">约14.05亿（2025年年末数据，原文章成文日期为2026年01月19日，来自国家统计局）</p>
                         </div>
                         <div class="mt-4">
                             <h3 class="font-bold text-lg mb-3 flex items-center">
                                 <i class="fa fa-area-chart text-primary mr-2"></i> 面积
                             </h3>
-                            <p class="text-sm">约960万平方公里</p>
+                            <p class="text-sm">约960万平方千米</p>
                         </div>
                     </div>
                 </div>
@@ -279,100 +379,96 @@ const icon = musicButton.querySelector('i');
         <!-- 文章列表 -->
         <div class="space-y-8">
             <!-- 文章1 -->
-            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
-                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">现代中国的强大工业实力</h2>
+            <article id="article-1" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">秦始皇的统一大业</h2>
                 <div class="text-center text-gray-500 text-sm mb-6">
-                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年9月20日</span>
-                    <span><i class="fa fa-user-o mr-1"></i> DeepSeek</span>
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
                 </div>
                 <div class="prose max-w-none">
-                    <p class="text-lg mb-4">在当今全球经济格局中，中国的工业实力宛如一颗耀眼的巨星，凭借持续创新和高效的产业布局，成为推动世界工业发展的重要力量。经过几十年的飞速发展，中国已建立起全球最完整的工业体系，展现出强大的制造能力和产业韧性。</p>
-                    <p class="mb-4">新中国成立以来，特别是改革开放之后，中国工业发展按下了“加速键”。从最初的基础制造业起步，逐步向高端制造业、智能制造等领域迈进。如今，中国在5G通信、新能源、高铁、航天等众多领域取得了举世瞩目的成就，成为全球工业创新的重要引领者。</p>
-                    <p class="mb-4">中国强大的工业实力体现在多个方面。在产业规模上，中国制造业增加值连续多年位居世界第一，众多工业产品产量全球领先；在技术创新上，中国企业加大研发投入，突破了一系列关键核心技术，实现了从“中国制造”到“中国创造”的转变；在产业链供应链上，中国拥有完备的产业配套能力，能够快速响应全球市场需求，为全球产业链稳定提供了有力支撑。</p>
+                    <p class="text-lg mb-4">在战国末期的历史舞台上，秦始皇嬴政宛如一颗耀眼的巨星，以雄才大略和果敢的行动力，完成了统一六国的大业，建立了中国历史上第一个大一统王朝——秦朝。</p>
+                    <p class="mb-4">公元前238年，嬴政铲除了嫪毐和吕不韦两大势力，开始亲政。随后，他任用李斯、尉缭等人才，制定了“灭诸侯，成帝业，为天下一统”的战略方针。从公元前230年到公元前221年，秦国先后灭掉韩、赵、魏、楚、燕、齐六国，完成统一大业。</p>
+                    <p class="mb-4">统一六国后，秦始皇采取了一系列巩固统一的措施。在政治上，他创立了皇帝制度，自称“始皇帝”，建立了三公九卿制和郡县制，加强了中央集权；在经济上，他统一度量衡、货币和文字，促进了经济和文化的交流与发展；在军事上，他派蒙恬北击匈奴，修筑长城，南征百越，扩大了秦朝的疆域。</p>
                     <blockquote class="border-l-4 border-primary pl-4 italic my-6">
-                        <p>“实体经济是国家的本钱，工业是立国之本。”</p>
-                        <footer class="text-right mt-2">—— 时代共识</footer>
+                        <p>“朕为始皇帝，后世以计数，二世、三世至于万世，传之无穷。”</p>
+                        <footer class="text-right mt-2">—— 秦始皇</footer>
                     </blockquote>
-                    <p class="mb-4">展望未来，中国工业将继续深化改革创新，加快数字化、智能化转型，推动绿色可持续发展。面对全球经济的不确定性和挑战，中国工业凭借强大的实力和韧性，将持续为全球经济增长注入新动力，为构建人类命运共同体贡献中国力量。</p>
+                    <p class="mb-4">然而，秦始皇的统治也存在着一些问题。他实行严刑峻法，繁重的赋税和徭役使得百姓生活困苦，民怨沸腾。秦朝的统治仅仅维持了十五年，就被农民起义推翻。但不可否认，秦始皇的统一大业对中国历史产生了深远的影响，他奠定了中国两千多年政治制度的基本格局。</p>
                 </div>
             </article>
 
             <!-- 文章2 -->
-            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
-                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">二次元文化在我国的传播</h2>
+            <article id="article-2" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国人工智能领域的展露锋芒·DeepSeek</h2>
                 <div class="text-center text-gray-500 text-sm mb-6">
-                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年9月20日</span>
-                    <span><i class="fa fa-user-o mr-1"></i> DeepSeek</span>
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
                 </div>
                 <div class="prose max-w-none">
-                    <p class="mb-4">二次元文化，这个源于日本的文化概念，在我国经历了从陌生到熟知，再到广泛流行的过程。自改革开放以来，随着我国对外交流的日益频繁，文化领域也迎来了多元的发展，二次元文化便是其中一支颇具影响力的力量。如今，它已成为我国文化消费市场中不可忽视的一部分。</p>
-                    <p class="mb-4">改革开放打开了国门，日本的动漫作品如《铁臂阿童木》《哆啦A梦》等率先进入我国观众的视野。这些作品以精彩的故事、丰富的想象力和独特的艺术风格吸引了大批观众，尤其是青少年群体，为二次元文化在我国的传播播下了种子。此后，越来越多的日本、欧美动漫作品涌入，不断丰富着我国二次元文化的内容。</p>
-                    <p class="mb-4">互联网的兴起为二次元文化的传播按下了加速键。网络的便捷性使得二次元爱好者能够轻松获取全球范围内的动漫、游戏、漫画等资源，还能通过论坛、社交平台等渠道进行交流和分享。各类二次元社区、同人创作平台应运而生，进一步推动了二次元文化的本土化发展。国内的创作者们也受到启发，开始创作具有中国特色的二次元作品，如《画江湖之不良人》等，在国内外都收获了不少粉丝。</p>
-                    <p class="mb-4">从市场层面来看，我国庞大的人口基数和消费升级的趋势，为二次元文化产业提供了广阔的发展空间。资本的涌入使得二次元文化的商业化运作更加成熟，周边产品、主题活动、线下体验店等形式层出不穷。例如，动漫展会成为了二次元爱好者的盛会，不仅能展示最新的作品和产品，还能促进国内外文化交流。</p>
-                    <p class="mb-4">此外，二次元文化的传播也得益于社交媒体和短视频平台的助力。短视频的快速传播特性让二次元相关内容能够迅速吸引大量关注，一些动漫梗、二次元舞蹈等在网络上广泛传播，进一步扩大了二次元文化的受众群体。同时，明星和网红的参与也为二次元文化带来了更多曝光度。</p>
-                    <p>综上所述，改革开放带来的文化交流、互联网的发展、市场的推动以及新媒体的助力，共同促进了二次元文化在我国的传播和发展。它不仅丰富了人们的精神生活，也为我国文化产业的多元化发展注入了新的活力。未来，二次元文化有望在与本土文化的融合中继续创新，绽放出更加独特的魅力。</p>
+                    <p class="mb-4">在2025年初，DeepSeek犹如一颗耀眼的新星，于全球人工智能领域迅速蹿红，成为众人瞩目的焦点。其爆火绝非偶然，背后蕴含着技术革新、成本优势等诸多深层次因素。</p>
+                    <p class="mb-4">DeepSeek在思考方式上与其他大模型存在显著差异。传统大模型多依赖大规模的监督学习，需耗费海量人工标注数据来训练模型，引导其生成预期输出。而DeepSeek开创性地构建无监督强化学习训练体系，大幅降低对人工标注数据的依赖 。模型如同一位在知识海洋中自我探索的学者，通过不断自我博弈、试错，激活自身推理潜能。例如，面对复杂的逻辑推理问题，传统模型可能基于大量已标注的相似案例来寻找答案，而DeepSeek则凭借强化学习框架，尝试从问题本质出发，自行推导解题思路，在数学和逻辑测试中，其表现超越了诸如OpenAI O1等知名模型，推理能力得到充分验证。</p>
+                    <p class="mb-4">训练成本层面，DeepSeek堪称行业“成本杀手”。以其推出的DeepSeek-V3为例，完成训练仅耗资约600万美元，而与之性能相当的美国同类模型，如GPT-4的训练成本却高达6300万美元左右。这般巨大的成本差距，主要源于DeepSeek在技术路线和硬件利用上的创新。在技术上，其采用混合专家架构（MoE）和多头潜在注意力（MLA）机制，大幅减少显存占用，相较于传统架构，显存占用量仅为其5%-13%，使得在同等硬件条件下，能够支持更大规模的参数，如DeepSeek-V3达到6710亿参数 。在硬件选择上，DeepSeek在英伟达高端芯片受限的情况下，提前储备英伟达A100芯片，并混合使用创新训练技术搭配较低端的GPU，成功绕过美国出口限制，实现低成本高效训练。</p>
+                    <p class="mb-4">从市场契合度来看，2025年初，全球AI市场对高效、低成本且具有创新性的模型需求极为迫切。彼时，主流产品如ChatGPT等，或因政策限制部分地区访问受限，或因算力瓶颈、商业化策略调整等，出现市场空白。DeepSeek精准捕捉到这一市场痛点，以亲民的价格、强大的性能迅速填补空缺。无论是专业人士，还是普通大众，都能轻松使用DeepSeek解决各类问题，例如医疗人员借助其辅助诊断，学生用它辅助学习，普通用户用它进行日常写作、创意构思等。</p>
+                    <p class="mb-4">此外，DeepSeek的开源策略也为其爆火添了一把柴。与部分巨头严守技术黑箱不同，DeepSeek将模型架构、训练方法等全面向全球开发者开放。这一举措吸引了海量开发者投身其生态建设，大家基于DeepSeek进行二次开发、优化，形成技术迭代的正向循环。一时间，网络上掀起复现DeepSeek的热潮，加州大学伯克利分校、香港科技大学等高校，以及知名人工智能公司HuggingFace等纷纷成功复现，甚至仅用几十美元成本就能完成，进一步扩大了DeepSeek的影响力与传播范围。</p>
+                    <p>综上所述，独特的思考方式、极致的训练成本优势、精准的市场定位以及开放的开源策略，共同铸就了DeepSeek在2025年初的爆火，使其成为中国人工智能领域崛起的典型代表，也为全球AI发展注入全新活力，推动行业朝着更高效、更普惠的方向大步迈进 。</p>
                 </div>
             </article>
 
             <!-- 文章3 -->
-            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
-                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">智能驾驶到底是否可取？</h2>
+            <article id="article-3" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">改革开放：中国发展的历史性转折</h2>
                 <div class="text-center text-gray-500 text-sm mb-6">
-                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年9月20日</span>
-                    <span><i class="fa fa-user-o mr-1"></i> DeepSeek</span>
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
                 </div>
                 <div class="prose max-w-none">
-                    <p class="text-lg mb-4">随着科技的飞速发展，智能驾驶技术逐渐走进人们的生活，从辅助驾驶到完全自动驾驶，这项技术正不断革新出行方式。然而，智能驾驶到底是否可取，成为了当下社会广泛讨论的话题，这与我国当今智能驾驶技术的可靠性密切相关。</p>
-                    <p class="mb-4">从积极的方面来看，智能驾驶技术有着诸多优势。在可靠性方面，我国的智能驾驶技术已经取得了显著的进步，大量的研发投入和道路测试使得系统的稳定性和安全性不断提升。智能驾驶可以有效减少人为失误导致的交通事故，据统计，大部分交通事故是由驾驶员疲劳、分心或违规驾驶造成的，而智能驾驶系统能够持续保持注意力，严格遵守交通规则。此外，智能驾驶还能提高交通效率，通过车与车、车与基础设施的通信，优化行驶路线，减少拥堵。</p>
-                    <h3 class="text-xl font-bold my-4">现存的挑战</h3>
-                    <p class="mb-4">尽管取得了进步，但智能驾驶技术仍面临一些可靠性方面的挑战。复杂的路况，如极端天气、道路施工、突发事件等，可能会干扰传感器和算法的正常运行，导致系统判断失误。此外，网络安全也是一个重要问题，如果智能驾驶系统遭到黑客攻击，后果不堪设想。目前，相关的法律法规和标准还在不断完善中，对于智能驾驶事故的责任认定也存在一定的模糊性。</p>
-                    <p class="mb-4">展望未来，随着技术的不断成熟和相关法规的健全，智能驾驶有望变得更加可靠。不过，在现阶段，消费者和社会在接受智能驾驶时仍需保持谨慎。只有在确保技术可靠性和安全性的前提下，智能驾驶才能真正成为人们安全、便捷的出行选择。 </p>
+                    <p class="text-lg mb-4">1978年12月，中国共产党十一届三中全会在北京召开，作出了实行改革开放的重大决策。这一决策，开启了中国社会主义现代化建设的新时期，是中国发展的历史性转折。</p>
+                    <p class="mb-4">改革开放以来，中国在经济、政治、文化、社会等各个领域都取得了举世瞩目的成就。在经济领域，中国实行了社会主义市场经济体制，推动了经济的快速发展，成为世界第二大经济体；在政治领域，中国坚持党的领导、人民当家作主、依法治国有机统一，不断推进社会主义民主政治建设；在文化领域，中国加强了文化建设，弘扬了中华优秀传统文化，培育和践行了社会主义核心价值观；在社会领域，中国加强了社会保障和改善民生，提高了人民的生活水平。</p>
+                    <h3 class="text-xl font-bold my-4">改革开放的意义</h3>
+                    <p class="mb-4">改革开放是中国发展进步的必由之路，是决定当代中国命运的关键一招。它不仅改变了中国的面貌，也影响了世界的发展格局。改革开放以来，中国与世界的联系日益紧密，在国际舞台上发挥着越来越重要的作用。</p>
+                    <p class="mb-4">展望未来，中国将继续坚定不移地推进改革开放，不断开创中国特色社会主义事业的新局面。</p>
                 </div>
             </article>
 
             <!-- 文章4 -->
-<article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
-    <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">迫害性教育的不可取意义</h2>
+<article id="article-4" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
+    <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">现代春节的多元度过方式</h2>
     <div class="text-center text-gray-500 text-sm mb-6">
-        <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年8月7日</span>
+        <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2026年2月2日</span>
         <span><i class="fa fa-user-o mr-1"></i> DeepSeek</span>
     </div>
     <div class="prose max-w-none">
-        <p class="mb-4">在我国传统教育观念中，部分家长受旧思想影响，将"压迫"视为教育的有效手段。他们坚信"棍棒底下出孝子"、"严师出高徒"的古训，将自己的意志强加于孩子，用批评、否定甚至体罚的方式实施所谓的"教育"，这种迫害性教育模式正在悄然侵蚀着下一代的身心健康。</p>
-        <p class="mb-4">迫害性教育往往以"为你好"为借口，实质是家长将自身的焦虑、未实现的愿望转嫁到孩子身上。孩子在成长过程中不断承受着过高的期望和严苛的要求，其独立人格被忽视，个人意愿被压制，创造性思维被束缚。长期处于这种环境中的孩子，容易产生自卑、焦虑、叛逆等心理问题，甚至形成扭曲的价值观。</p>
-        <p class="mb-4">这种教育模式的负面影响是深远的。在迫害性教育下成长的孩子，往往难以建立健康的人际关系，缺乏安全感和信任感，在成年后可能会延续这种压迫式的相处模式，将痛苦传递给下一代。同时，这种教育方式也会扼杀孩子的天性和潜能，使他们在未来的社会竞争中缺乏创新能力和独立思考能力。</p>
-        <blockquote class="border-l-4 border-primary pl-4 italic my-6">
-            <p>"教育的本质是一棵树摇动另一棵树，一朵云推动另一朵云，一个灵魂唤醒另一个灵魂。"</p>
-            <footer class="text-right mt-2">—— 雅斯贝尔斯</footer>
-        </blockquote>
-        <p class="mb-4">值得庆幸的是，新一代年轻人作为这种教育模式下的直接受害者，同时也成为了最深刻的理解者。他们亲身体验了迫害性教育带来的痛苦与伤害，更加清楚这种教育方式的弊端。因此，他们有希望成为打破这一传统教育模式的先行者。</p>
-        <p class="mb-4">新一代年轻人正在以更加开放、包容的心态看待教育。他们中的许多人表示，未来会以更宽容、更尊重的方式对待自己的孩子，注重培养孩子的独立人格和创造力，建立平等的亲子关系。也有一部分年轻人选择不再生育孩子，以此来避免将自己曾经承受的精神负担传递给下一代，这同样是对迫害性教育模式的一种反思和反抗。</p>
-        <p class="mb-4">教育的真谛在于引导与启发，而非压迫与控制。打破迫害性教育的循环，需要社会各界的共同努力，更需要每一位家长转变观念。只有给予孩子足够的尊重与理解，才能让他们在健康的环境中成长，成为有独立思想、有健全人格的人。</p>
+        <p class="mb-4">春节的庆祝方式，正从单一的传统团圆，演变为一幅多元并存的现代图景。</p>
+        <p class="mb-4"><strong>“数字年味”成新俗</strong>：云端团聚、视频拜年、微信群抢红包，让亲情友情在指尖传递，即便远隔重洋，也能瞬间同屏共贺新春。</p>
+        <p class="mb-4"><strong>“旅行过年”受青睐</strong>：越来越多的家庭选择在旅途中迎接新年。北上赏雪、南下避寒，或寻访古镇年俗，在异乡的风景里体验别样的团圆与放松。</p>
+        <p class="mb-4"><strong>“文化休闲”渐风靡</strong>：博物馆里过大年、影院欣赏“春节档”、书店静心阅读，成为许多人充实假期、满足精神需求的新选择。</p>
+        <p class="mb-4"><strong>“简约宅家”亦温馨</strong>：也有不少都市人选择避开喧嚣，居家深度休息，享受烹饪、观影、陪伴家人的慢时光。</p>
+        <p class="mb-4">无论形式如何变迁，春节承载的情感内核——团圆、祈福与迎新，始终是连接你我的温暖纽带。多元选择，让这个古老节日在现代社会中焕发出新的活力与包容。</p>
     </div>
 </article>
 
             <!-- 文章5 -->
-            <article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
-                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">在人工智能领域能掰手腕的，只有中美两家</h2>
+            <article id="article-5" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
+                <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">中国新能源汽车的领航员・比亚迪</h2>
                 <div class="text-center text-gray-500 text-sm mb-6">
-                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年9月20日</span>
-                    <span><i class="fa fa-user-o mr-1"></i> DeepSeek</span>
+                    <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年7月15日</span>
+                    <span><i class="fa fa-user-o mr-1"></i> Doubao AI</span>
                 </div>
                 <div class="prose max-w-none">
-                    <p class="text-lg mb-4">在全球人工智能（AI）产业迅猛发展的浪潮中，中美两国无疑是最为耀眼的两颗巨星，在这一领域能真正掰手腕的，也只有中美两家。两国凭借各自深厚的科技底蕴、庞大的人才储备以及高瞻远瞩的战略布局，在人工智能领域不断创造新的辉煌。</p>
-                    <p class="mb-4">中美在人工智能领域的发展历程，就是一部充满突破与创新的奋进史。美国作为人工智能研究的起源地，早在20世纪50年代就开启了相关研究，长期以来在基础理论、核心算法和顶尖科研成果方面处于领先地位。谷歌、微软、OpenAI等科技巨头不断投入资源，推动人工智能技术从实验室走向现实应用。而中国自改革开放以来，科技实力不断增强，近年来更是将人工智能上升为国家战略。百度、字节跳动、华为等企业在人工智能应用领域快速崛起，凭借庞大的数据资源和丰富的应用场景，实现了从跟跑到并跑、部分领域领跑的转变。</p>
-                    <h3 class="text-xl font-bold my-4">技术创新：中美角逐的核心密码</h3>
-                    <p class="mb-4">技术创新是中美在人工智能领域角逐的核心密码。两国都深知，只有掌握核心技术，才能在激烈的全球竞争中立于不败之地。美国政府持续加大对人工智能基础研究的投入，顶尖高校和科研机构不断产出开创性的理论成果。同时，美国企业在芯片设计、算法优化等方面拥有强大的技术实力，英伟达的GPU芯片为人工智能计算提供了强大动力。中国同样重视技术创新，国家科研项目大力支持人工智能基础研究，企业在应用技术创新方面表现突出。例如，在自然语言处理领域，中国的大语言模型在中文理解和生成方面具有独特优势；在计算机视觉领域，人脸识别、智能安防等技术广泛应用并处于世界前列。</p>
-                    <h3 class="text-xl font-bold my-4">市场表现：各领风骚</h3>
-                    <p class="mb-4">在市场表现上，中美两国各领风骚。美国的人工智能企业在全球市场占据重要份额，其产品和服务广泛应用于金融、医疗、交通等多个领域。例如，OpenAI的ChatGPT引发了全球范围内的人工智能应用热潮，谷歌的智能助手在语音交互领域处于领先地位。中国的人工智能市场规模也在迅速扩大，凭借庞大的国内市场需求和快速的技术迭代，在智能家居、移动支付、智能驾驶等领域涌现出众多具有全球竞争力的企业。例如，字节跳动的人工智能推荐算法让旗下产品在全球拥有数亿用户，滴滴的智能出行平台利用人工智能技术优化交通资源配置。</p>
+                    <p class="text-lg mb-4">在全球新能源汽车产业蓬勃发展的浪潮中，比亚迪无疑是最为耀眼的弄潮儿，堪称中国新能源汽车的领航员。其凭借敢为人先的勇气、持之以恒的创新以及高瞻远瞩的战略布局，在新能源汽车领域书写了一个又一个传奇。</p>
+                    <p class="mb-4">比亚迪的发展历程，就是一部不断突破、不断创新的奋斗史。2003年，比亚迪毅然跨界造车，怀揣着对新能源战略的坚定信念，从最基础的汽车机械配件开始摸索前行。2008年，比亚迪推出全球首款量产插混车型F3DM，率先在新能源汽车领域种下希望的种子。此后，比亚迪持续深耕技术研发，历经多年沉淀，刀片电池、DM-i超级混动技术、e平台3.0等核心技术相继问世，每一项技术的突破都为其在市场竞争中增添了强劲动力。</p>
+                    <h3 class="text-xl font-bold my-4">技术创新：比亚迪的核心密码</h3>
+                    <p class="mb-4">技术创新是比亚迪领航新能源汽车产业的核心密码。比亚迪坚信，只有掌握核心技术，才能在激烈的市场竞争中立于不败之地。为此，比亚迪不惜投入巨额资金用于研发。仅今年前三季度，比亚迪研发投入就达到333亿元，同比增长34%，创下历史新高。长期以来，比亚迪的研发投入在过去14年中有13年高于净利润，累计研发投入超1600亿，智能化下半场还将投入1000亿元。如此大规模的研发投入，让比亚迪拥有了11大研究院、11万工程师，成为全球研发人员最多的车企。也正是凭借这庞大的研发团队，比亚迪的技术鱼池硕果累累，截至目前已成功申请超过13,000项专利，在电池技术、混动技术等关键领域遥遥领先，众多专利技术成为其在市场竞争中的制胜法宝。</p>
+                    <h3 class="text-xl font-bold my-4">市场表现：一骑绝尘</h3>
+                    <p class="mb-4">在市场表现上，比亚迪更是一骑绝尘。2024年，比亚迪成为首家连续单月销量突破50万辆大关的中国车企，刷新了全球车企在新能源领域的月销纪录。旗下品牌矩阵全面发力，王朝网与海洋网作为销量基本盘，精准满足大众品质出行需求，秦系列、海鸥等车型凭借亲民价格、出色性能深受消费者喜爱。腾势、方程豹和仰望三大高端品牌则进一步拓宽品牌边界，提升品牌形象。腾势在高端MPV和SUV领域站稳脚跟，方程豹以"越野 + 新能源"开辟新赛道，仰望凭借易四方平台打造百万级高端产品，在全球顶级新能源行列中占据一席之地。</p>
                     <h3 class="text-xl font-bold my-4">推动行业发展</h3>
-                    <p class="mb-4">中美在人工智能领域的发展，不仅成就了自身，更推动了全球人工智能产业的整体进步。在技术创新上，两国的研究成果相互启发、相互促进，推动了人工智能基础理论和应用技术的不断突破。在市场层面，中美企业的竞争与合作促使全球人工智能市场更加繁荣，降低了技术应用成本，加速了技术普及。在人才培养方面，两国的高校和科研机构吸引了全球优秀人才，为人工智能产业发展提供了源源不断的智力支持。</p>
-                    <p>展望未来，中美两国将继续在人工智能领域发挥引领作用。虽然两国在技术竞争、数据安全等方面存在一定挑战，但也有着广阔的合作空间。相信在中美等国家的共同努力下，人工智能技术将不断取得新的突破，为全球经济社会发展和人类福祉带来更多积极影响。</p>
+                    <p class="mb-4">比亚迪的成功，不仅成就了自身，更推动了中国新能源汽车产业的整体发展。在技术创新上，比亚迪的突破带动了国内众多企业加大研发投入，促进整个产业技术水平的提升；在市场层面，比亚迪的高市场份额打破了传统竞争格局，促使外资品牌加速电动化转型，同时也为中国品牌出海提供了宝贵经验；在产业链方面，比亚迪庞大的销量带动了上下游产业协同发展，增强了供应链韧性，完善了产业生态。</p>
+                    <p>展望未来，比亚迪将继续凭借技术创新、战略布局等优势，在全球新能源汽车市场中乘风破浪。相信在比亚迪等众多优秀企业的共同努力下，中国新能源汽车产业必将在全球舞台上绽放更加耀眼的光芒，实现从汽车大国向汽车强国的华丽转身。</p>
                 </div>
             </article>
 
             <!-- 文章6 -->
-<article class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover">
+<article id="article-6" class="bg-white rounded-xl shadow-lg p-6 md:p-8 card-hover scroll-fade">
     <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold text-primary mb-4 text-center">雄安新区的建设意义到底是什么？</h2>
     <div class="text-center text-gray-500 text-sm mb-6">
         <span class="inline-block mr-4"><i class="fa fa-calendar-o mr-1"></i> 2025年8月7日</span>
@@ -408,38 +504,52 @@ const icon = musicButton.querySelector('i');
                 </div>
             </div>
             <div class="border-t border-white/20 mt-6 pt-6 text-center text-sm text-white/70">
-                &copy; 2025 赤县神州古今漫谈
+                &copy; 2025-2026 赤县神州古今漫谈
             </div>
         </div>
     </footer>
 
     <script>
         const themeToggle = document.getElementById('theme-toggle');
-        const toggleIcon = document.getElementById('toggle-icon');
-        const sun = document.getElementById('sun');
-        const moon = document.getElementById('moon');
-        const dayBg = document.getElementById('day-bg');
-        const nightBg = document.getElementById('night-bg');
+        const themeIcon = document.getElementById('theme-icon');
         const body = document.body;
-
-        // 计算正确的位移量
-        const calculateTranslateX = () => {
-            const buttonWidth = themeToggle.offsetWidth;
-            const iconWidth = toggleIcon.offsetWidth;
-            const borderWidth = 2; // 按钮边框宽度
-            return buttonWidth - iconWidth - (borderWidth * 2);
-        };
-
-        // 检查本地存储中的主题偏好
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-
-        // 初始化主题
-        if (isDarkMode) {
-            applyDarkMode();
-        } else {
-            // 确保太阳在最左侧
-            toggleIcon.style.left = '2px';
+        const settingsToggle = document.getElementById('settings-toggle');
+        const settingsPanel = document.getElementById('settings-panel');
+        const settingsOverlay = document.getElementById('settings-overlay');
+        const musicToggle = document.getElementById('music-toggle');
+        const musicIcon = document.getElementById('music-icon');
+        
+        // 轮播功能
+        let slideIndex = 0;
+        const slides = document.querySelectorAll('.slides');
+        
+        function showSlides() {
+            // 隐藏所有幻灯片
+            slides.forEach(slide => {
+                slide.style.opacity = '0';
+            });
+            
+            // 增加索引
+            slideIndex++;
+            if (slideIndex > slides.length) {
+                slideIndex = 1;
+            }
+            
+            // 显示当前幻灯片
+            slides[slideIndex - 1].style.opacity = '1';
+            
+            // 设置5秒后自动切换
+            setTimeout(showSlides, 5000);
         }
+        
+        // 页面加载完成后启动轮播
+        window.addEventListener('DOMContentLoaded', function() {
+            showSlides();
+        });
+
+        // 强制使用浅色模式初始化
+        localStorage.setItem('darkMode', 'false');
+        applyLightMode();
 
         themeToggle.addEventListener('click', () => {
             if (body.classList.contains('dark-mode')) {
@@ -453,25 +563,44 @@ const icon = musicButton.querySelector('i');
 
         function applyDarkMode() {
             body.classList.add('dark-mode');
-            const translateX = calculateTranslateX() - 2; // 微调以确保完全贴合
-            toggleIcon.style.transform = `translateX(${translateX}px)`;
-            setTimeout(() => {
-                sun.style.opacity = '0';
-                moon.style.opacity = '1';
-            }, 300);
-            dayBg.style.opacity = '0';
-            nightBg.style.opacity = '1';
+            themeIcon.className = 'fa fa-moon text-white text-lg';
         }
 
         function applyLightMode() {
             body.classList.remove('dark-mode');
-            sun.style.opacity = '1';
-            moon.style.opacity = '0';
-            setTimeout(() => {
-                toggleIcon.style.transform = 'translateX(0)';
-            }, 100);
-            dayBg.style.opacity = '1';
-            nightBg.style.opacity = '0';
+            themeIcon.className = 'fa fa-sun text-yellow-500 text-lg';
+        }
+
+        // 设置面板功能
+        settingsToggle.addEventListener('click', () => {
+            settingsPanel.classList.remove('opacity-0', 'invisible', 'scale-95');
+            settingsPanel.classList.add('opacity-100', 'visible', 'scale-100');
+            settingsOverlay.classList.remove('opacity-0', 'invisible');
+            settingsOverlay.classList.add('opacity-100', 'visible');
+        });
+
+        function closeSettings() {
+            settingsPanel.classList.remove('opacity-100', 'visible', 'scale-100');
+            settingsPanel.classList.add('opacity-0', 'invisible', 'scale-95');
+            settingsOverlay.classList.remove('opacity-100', 'visible');
+            settingsOverlay.classList.add('opacity-0', 'invisible');
+        }
+
+        settingsOverlay.addEventListener('click', closeSettings);
+
+        // 音乐播放按钮功能
+        musicToggle.addEventListener('click', () => {
+            toggleMusic();
+            updateMusicIcon();
+        });
+
+        function updateMusicIcon() {
+            const audio = document.getElementById("myAudio");
+            if (audio.paused) {
+                musicIcon.className = "fa fa-music";
+            } else {
+                musicIcon.className = "fa fa-pause";
+            }
         }
     </script>
     <!-- 音频播放核心组件（放在页面底部） -->
@@ -492,10 +621,10 @@ window.addEventListener('DOMContentLoaded', function() {
 // 全局变量
 let currentAudioSrc = ""; // 记录当前使用的音频源
 
+
 window.addEventListener('DOMContentLoaded', function() {
   const audio = document.getElementById("myAudio");
-  const button = document.getElementById("musicButton");
-  const icon = document.getElementById("musicIcon");
+  const musicIcon = document.getElementById("music-icon");
   
   // 初始化音乐
   updateMusicInfoByTime();
@@ -503,15 +632,11 @@ window.addEventListener('DOMContentLoaded', function() {
   
   // 监听音频状态变化，同步按钮样式
   audio.addEventListener('play', function() {
-    button.style.background = "#3b82f6";
-    icon.className = "fa fa-pause";
-    icon.style.color = "white";
+    musicIcon.className = "fa fa-pause";
   });
   
   audio.addEventListener('pause', function() {
-    button.style.background = "white";
-    icon.className = "fa fa-music";
-    icon.style.color = "#3b82f6";
+    musicIcon.className = "fa fa-music";
   });
 });
 
@@ -537,13 +662,13 @@ function updateMusicInfoByTime() {
     
     // 更新音乐信息
     if (isDaytime) {
-      bindTimeEl.textContent = "2025年8月1日";
-      musicNameEl.textContent = "相亲相爱 - 丁于,姚贝娜,曹芙嘉,马海生";
-      playTimeEl.textContent = "2025年8月1日~2025年9月30日";
+      bindTimeEl.textContent = "2026年2月6日";
+      musicNameEl.textContent = "辞九门回忆（误闯天家 劝余放下手中砂） - 纳米";
+      playTimeEl.textContent = "2026年2月6日~2026年2月16日";
     } else {
-      bindTimeEl.textContent = "2025年8月21日";
-      musicNameEl.textContent = "去云端 - 音速行星";
-      playTimeEl.textContent = "2025年8月21日~2025年9月30日";
+      bindTimeEl.textContent = "2026年2月6日";
+      musicNameEl.textContent = "千岁琉璃 - 鹭起Herons";
+      playTimeEl.textContent = "2026年2月6日~2026年2月16日";
     }
     
     // 更新音频源并保持播放状态
@@ -581,7 +706,64 @@ function toggleMusic() {
 }
 
 // 页面加载完成后初始化音乐
-window.addEventListener('DOMContentLoaded', initMusic);
+// 移除对不存在的initMusic函数的调用
+// window.addEventListener('DOMContentLoaded', initMusic);
+
+// 文章目录功能
+window.addEventListener('DOMContentLoaded', function() {
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocContent = document.getElementById('toc-content');
+    const tocContainer = document.getElementById('toc-container');
+    const tocLinks = tocContent.querySelectorAll('a');
+    
+    // 切换目录显示/隐藏
+    tocToggle.addEventListener('click', function() {
+        if (tocContent.classList.contains('opacity-0')) {
+            // 显示目录
+            tocContent.classList.remove('opacity-0', 'invisible', '-translate-x-4');
+            tocContent.classList.add('opacity-100', 'visible', 'translate-x-0');
+        } else {
+            // 隐藏目录
+            tocContent.classList.remove('opacity-100', 'visible', 'translate-x-0');
+            tocContent.classList.add('opacity-0', 'invisible', '-translate-x-4');
+        }
+    });
+    
+    // 点击目录链接后隐藏目录
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            tocContent.classList.remove('opacity-100', 'visible', 'translate-x-0');
+            tocContent.classList.add('opacity-0', 'invisible', '-translate-x-4');
+        });
+    });
+    
+    // 点击页面其他地方隐藏目录
+    document.addEventListener('click', function(event) {
+        if (!tocContainer.contains(event.target)) {
+            tocContent.classList.remove('opacity-100', 'visible', 'translate-x-0');
+            tocContent.classList.add('opacity-0', 'invisible', '-translate-x-4');
+        }
+    });
+    
+    // 滚动淡入效果
+    const scrollFadeElements = document.querySelectorAll('.scroll-fade');
+    
+    function checkScroll() {
+        scrollFadeElements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 50; // 减小触发阈值
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.classList.add('visible');
+            }
+        });
+    }
+    
+    // 确保DOM完全加载后再执行初始检查
+    setTimeout(checkScroll, 100);
+    // 滚动时检查
+    window.addEventListener('scroll', checkScroll);
+});
 </script>
 </body>
 
