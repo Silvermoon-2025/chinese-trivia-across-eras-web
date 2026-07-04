@@ -229,7 +229,7 @@
                             </div>
                             <div>
                                 <span class="block text-gray-400 dark:text-gray-500 text-xs">绑定音乐</span>
-                                <span id="musicName-m" class="font-medium">辞九门回忆 - 纳米</span>
+                                <span id="musicName-m" class="font-medium">琵琶曲 - 郑浩Z-Hao,冰洁</span>
                             </div>
                             <div>
                                 <span class="block text-gray-400 dark:text-gray-500 text-xs">续播时间</span>
@@ -657,7 +657,8 @@
             const musicNameEls = document.querySelectorAll('#musicName, #musicName-m');
             const playTimeEls = document.querySelectorAll('#playTime, #playTime-m');
 
-            let newSrc = isDaytime ? "赤县神州古今漫谈.mp3" : "赤县神州古今漫谈（夜间）.mp3";
+            const audioVersion = "v2";
+            let newSrc = isDaytime ? `赤县神州古今漫谈.mp3?${audioVersion}` : `赤县神州古今漫谈（夜间）.mp3?${audioVersion}`;
 
             if (currentAudioSrc !== newSrc) {
                 const wasPlaying = !audio.paused;
@@ -667,13 +668,16 @@
                     musicNameEls.forEach(el => el.textContent = "琵琶曲 - 郑浩Z-Hao,冰洁");
                     playTimeEls.forEach(el => el.textContent = "2026年6月30日~2026年8月15日");
                 } else {
-                    bindTimeEls.forEach(el => el.textContent = "2026年6月30日");
+                    bindTimeEls.forEach(el => el.textContent = "2026年2月6日");
                     musicNameEls.forEach(el => el.textContent = "宴清都（伴奏） - 徒有琴");
                     playTimeEls.forEach(el => el.textContent = "2026年6月30日~2026年8月15日");
                 }
 
+                audio.pause();
+                audio.currentTime = 0;
                 currentAudioSrc = newSrc;
                 audio.src = newSrc;
+                audio.load();
 
                 audio.addEventListener('loadedmetadata', function onLoaded() {
                     if (wasPlaying) audio.play().catch(e => console.log("自动播放失败:", e));
